@@ -1,121 +1,180 @@
+
 # AI Journal Recommendation System
 
-print("AI Journal Recommendation System")
-
-# Research paper details
-topic = input("Enter your research topic: ").strip().lower()
-paper = {
-    "topic": topic
-}
-# Related research topics
-
-
-related_topics = {
-    "deep learning": "machine learning",
-    "neural networks": "machine learning",
-    "computer vision": "machine learning",
-    "data mining": "data mining",
-    "natural language processing": "artificial intelligence"
-}
-
-print("Research Paper Topic:", paper["topic"])
+print("=" * 45)
+print("     AI JOURNAL RECOMMENDATION SYSTEM")
+print("=" * 45)
 
 # Journal dataset
 journals = [
     {
         "name": "International Journal of Artificial Intelligence",
-        "field": "Artificial Intelligence",
-        "type": "Research Journal"
+        "field": "artificial intelligence",
+        "keywords": ["artificial intelligence", "robotics", "expert systems"]
     },
     {
         "name": "Journal of Machine Learning Research",
-        "field": "Machine Learning",
-        "type": "Research Journal"
+        "field": "machine learning",
+        "keywords": ["machine learning", "deep learning", "reinforcement learning"]
     },
     {
         "name": "Expert Systems with Applications",
-        "field": "Artificial Intelligence",
-        "type": "Research Journal"
+        "field": "artificial intelligence",
+        "keywords": ["expert systems", "artificial intelligence", "decision support"]
     },
     {
         "name": "Applied Soft Computing",
-        "field": "Machine Learning",
-        "type": "Research Journal"
+        "field": "machine learning",
+        "keywords": ["machine learning", "optimization", "neural networks"]
     },
     {
         "name": "Knowledge-Based Systems",
-        "field": "Data Mining",
-        "type": "Research Journal"
+        "field": "data mining",
+        "keywords": ["data mining", "knowledge systems", "text mining"]
     },
     {
         "name": "Information Sciences",
-        "field": "Data Mining",
-        "type": "Research Journal"
+        "field": "data mining",
+        "keywords": ["data mining", "data analysis", "machine learning"]
     },
     {
         "name": "Engineering Applications of Artificial Intelligence",
-        "field": "Artificial Intelligence",
-        "type": "Research Journal"
+        "field": "artificial intelligence",
+        "keywords": ["artificial intelligence", "robotics", "automation"]
     },
     {
         "name": "Neurocomputing",
-        "field": "Machine Learning",
-        "type": "Research Journal"
+        "field": "machine learning",
+        "keywords": ["neural networks", "deep learning", "machine learning"]
     },
     {
         "name": "Pattern Recognition",
-        "field": "Machine Learning",
-        "type": "Research Journal"
+        "field": "machine learning",
+        "keywords": ["pattern recognition", "computer vision", "image processing"]
     },
     {
         "name": "Artificial Intelligence Review",
-        "field": "Artificial Intelligence",
-        "type": "Research Journal"
-    },
-
+        "field": "artificial intelligence",
+        "keywords": ["artificial intelligence", "deep learning", "natural language processing"]
+    }
 ]
 
-# Display all journals
-print("\nAvailable Journals:")
+# Related topic mapping
+related_topics = {
+    "deep learning": "machine learning",
+    "neural networks": "machine learning",
+    "computer vision": "machine learning",
+    "data mining": "data mining",
+    "natural language processing": "artificial intelligence",
+    "machine learning": "machine learning",
+    "artificial intelligence": "artificial intelligence",
+    "robotics": "artificial intelligence",
+    "expert systems": "artificial intelligence",
+    "predictive analytics": "data mining",
+    "pattern recognition": "machine learning",
+    "image processing": "machine learning",
+    "text mining": "data mining",
+    "big data": "data mining",
+    "reinforcement learning": "machine learning",
+    "quantum computing": "artificial intelligence"
+}
 
-for journal in journals:
-    print(journal["name"])
+# Keep the program running until the user exits
+while True:
+    print("\nAvailable options:")
+    print("1. Recommend journals")
+    print("2. View all journals")
+    print("3. Exit")
 
-# Recommend journals
+    choice = input("\nEnter your choice: ").strip()
 
-recommended_topic = related_topics.get(
-    paper["topic"], paper["topic"]
-)
+    if choice == "1":
+        topic = input("\nEnter your research topic: ").strip().lower()
 
-print("Topic used for matching:", recommended_topic)
-print("\nRecommended Journals:")
+        if topic == "":
+            print("Error: Research topic cannot be empty.")
+            continue
 
-found = False
-count = 0
+        # Find the matching field
+        matching_field = related_topics.get(topic, topic)
 
-for journal in journals:
-    if recommended_topic == journal["field"].lower():
-        print(journal["name"])
-        count = count + 1
-        found = True
+        print("\nResearch Paper Topic:", topic)
+        print("Topic used for matching:", matching_field)
 
-if found == False:
-    print("No matching journals found.")
-else:
-    print("Total recommendations:", count)
+        # Calculate keyword relevance scores
+        recommendations = []
 
-print("------------------------------")
-print("Search completed for topic:", paper["topic"])
-print("Recommendations generated:", count)
-print("------------------------------")
+        for journal in journals:
+            score = 0
 
+            # Give points when the topic matches a journal keyword
+            for keyword in journal["keywords"]:
+                if keyword in topic or topic in keyword:
+                    score = score + 2
 
-# Recommendation result rating
-if count >= 5:
-    print("Result Status: Many recommendations")
-elif count >= 3:
-    print("Result Status: Good recommendations")
-elif count >= 1:
-    print("Result Status: Few recommendations")
-else:
-    print("Result Status: No recommendations")
+            # Give an additional point for a matching field
+            if journal["field"] == matching_field:
+                score = score + 1
+
+            # Save journals with a positive score
+            if score > 0:
+                recommendations.append({
+                    "name": journal["name"],
+                    "score": score
+                })
+
+        # Sort recommendations by score, highest first
+        recommendations.sort(
+            key=lambda journal: journal["score"],
+            reverse=True
+        )
+
+        print("\nRecommended Journals:")
+
+        if len(recommendations) == 0:
+            print("No matching journals found.")
+            print("Try a different or more specific research topic.")
+
+        else:
+            count = 0
+
+            for journal in recommendations:
+                count = count + 1
+                print(
+                    str(count) + ". " + journal["name"]
+                    + " (Relevance score: "
+                    + str(journal["score"]) + ")"
+                )
+
+            print("\nTotal recommendations:", count)
+
+        print("-" * 40)
+
+        print("Search completed for topic:", topic)
+        print("Recommendations generated:", len(recommendations))
+
+        if len(recommendations) >= 5:
+            print("Result Status: Many recommendations")
+        elif len(recommendations) >= 3:
+            print("Result Status: Good recommendations")
+        elif len(recommendations) >= 1:
+            print("Result Status: Few recommendations")
+        else:
+            print("Result Status: No recommendations")
+
+        print("-" * 40)
+
+    elif choice == "2":
+        print("\nAvailable Journals:")
+
+        for journal in journals:
+            print("-", journal["name"])
+
+        print("\nTotal journals:", len(journals))
+
+    elif choice == "3":
+        print("\nThank you for using the AI Journal Recommendation System!")
+        break
+
+    else:
+        print("Invalid choice. Please enter 1, 2, or 3.")
